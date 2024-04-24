@@ -30,12 +30,11 @@ import CoreLocation
 public struct Prayer: Equatable, Hashable, Codable, Sendable, Identifiable {
     public let prayerName: Name
     
+    /// prayer time in GTC
     public let prayerTime: Date
     
-    
-    
-    public var id: String {
-        "\(prayerName)_\(prayerTime.timeIntervalSince1970)"
+    public var id: Name {
+        prayerName
     }
     
     public enum Name: String, Codable, Hashable, Sendable, CaseIterable {
@@ -158,8 +157,8 @@ public struct Qibla {
 // MARK: extension
 public extension PrayerTimes {
     
-    init?(coordinates: Coordinates, date: DateComponents, method: CalculationMethod) {
-        self.init(coordinates: coordinates, date: date, calculationParameters: method.params)
+    init?(coordinates: Coordinates, date: DateComponents, method: CalculationMethodInput) {
+        self.init(coordinates: coordinates, date: date, calculationParameters: method.calculationMethod.params)
     }
     
     
@@ -171,7 +170,7 @@ public extension PrayerTimes {
         var tempAsr: Date? = nil
         var tempMaghrib: Date? = nil
         var tempIsha: Date? = nil
-        let cal: Calendar = .gregorianUTC
+        let cal = Calendar.gregorianUTC
         
         guard let prayerDate = cal.date(from: date),
               let tomorrowDate = cal.date(byAdding: .day, value: 1, to: prayerDate),

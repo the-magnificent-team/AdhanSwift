@@ -31,6 +31,7 @@ struct SolarTime {
     let date: DateComponents
     let observer: Coordinates
     let solar: SolarCoordinates
+    
     let transit: DateComponents
     let sunrise: DateComponents
     let sunset: DateComponents
@@ -66,6 +67,8 @@ struct SolarTime {
         let sunriseTime = Astronomical.correctedHourAngle(approximateTransit: m0, angle: solarAltitude, coordinates: coordinates, afterTransit: false, siderealTime: solar.apparentSiderealTime,
                                                        rightAscension: solar.rightAscension, previousRightAscension: prevSolar.rightAscension, nextRightAscension: nextSolar.rightAscension,
                                                        declination: solar.declination, previousDeclination: prevSolar.declination, nextDeclination: nextSolar.declination)
+        
+        
         let sunsetTime = Astronomical.correctedHourAngle(approximateTransit: m0, angle: solarAltitude, coordinates: coordinates, afterTransit: true, siderealTime: solar.apparentSiderealTime,
                                                       rightAscension: solar.rightAscension, previousRightAscension: prevSolar.rightAscension, nextRightAscension: nextSolar.rightAscension,
                                                       declination: solar.declination, previousDeclination: prevSolar.declination, nextDeclination: nextSolar.declination)

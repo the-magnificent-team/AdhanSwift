@@ -71,7 +71,7 @@ internal extension DateComponents {
     }
 }
 
-internal extension Calendar {
+public extension Calendar {
     
     /// All calculations are done using a gregorian calendar with the UTC timezone
     static let gregorianUTC: Calendar = {
@@ -83,4 +83,8 @@ internal extension Calendar {
         cal.timeZone = utc
         return cal
     }()
+    
+    func prayerDateComponent(from date: Date) -> DateComponents {
+        dateComponents([.year, .month, .day], from: date)
+    }
 }

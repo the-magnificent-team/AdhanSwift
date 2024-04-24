@@ -50,66 +50,66 @@ class AdhanTests: XCTestCase {
     }
     
     func testCalculationMethods() {
-        let p1 = CalculationMethod.muslimWorldLeague.params
+        let p1 = CalculationMethodInput(calculationMethodType: .muslimWorldLeague, madhab: .shafi).calculationMethod.params
         XCTAssertEqual(p1.fajrAngle, 18)
         XCTAssertEqual(p1.ishaAngle, 17)
         XCTAssertEqual(p1.ishaInterval, 0)
        
         
-        let p2 = CalculationMethod.egyptian.params
+        let p2 = CalculationMethodInput(calculationMethodType: .egyptian, madhab: .shafi).calculationMethod.params
         XCTAssertEqual(p2.fajrAngle, 19.5)
         XCTAssertEqual(p2.ishaAngle, 17.5)
         XCTAssertEqual(p2.ishaInterval, 0)
         
         
-        let p3 = CalculationMethod.karachi.params
+        let p3 = CalculationMethodInput(calculationMethodType: .karachi, madhab: .shafi).calculationMethod.params
         XCTAssertEqual(p3.fajrAngle, 18)
         XCTAssertEqual(p3.ishaAngle, 18)
         XCTAssertEqual(p3.ishaInterval, 0)
       
         
-        let p4 = CalculationMethod.ummAlQura.params
+        let p4 = CalculationMethodInput(calculationMethodType: .ummAlQura, madhab: .shafi).calculationMethod.params
         XCTAssertEqual(p4.fajrAngle, 18.5)
         XCTAssertEqual(p4.ishaAngle, 0)
         XCTAssertEqual(p4.ishaInterval, 90)
        
         
-        let p5 = CalculationMethod.dubai.params
+        let p5 = CalculationMethodInput(calculationMethodType: .dubai, madhab: .shafi).calculationMethod.params
         XCTAssertEqual(p5.fajrAngle, 18.2)
         XCTAssertEqual(p5.ishaAngle, 18.2)
         XCTAssertEqual(p5.ishaInterval, 0)
        
         
-        let p6 = CalculationMethod.moonsightingCommittee.params
+        let p6 = CalculationMethodInput(calculationMethodType: .moonsightingCommittee, madhab: .shafi).calculationMethod.params
         XCTAssertEqual(p6.fajrAngle, 18)
         XCTAssertEqual(p6.ishaAngle, 18)
         XCTAssertEqual(p6.ishaInterval, 0)
         assert(p6.isMoonSightingCommittee)
         
-        let p7 = CalculationMethod.northAmerica.params
+        let p7 = CalculationMethodInput(calculationMethodType: .northAmerica, madhab: .shafi).calculationMethod.params
         XCTAssertEqual(p7.fajrAngle, 15)
         XCTAssertEqual(p7.ishaAngle, 15)
         XCTAssertEqual(p7.ishaInterval, 0)
       
         
-        let p9 = CalculationMethod.kuwait.params
+        let p9 = CalculationMethodInput(calculationMethodType: .kuwait, madhab: .shafi).calculationMethod.params
         XCTAssertEqual(p9.fajrAngle, 18)
         XCTAssertEqual(p9.ishaAngle, 17.5)
         XCTAssertEqual(p9.ishaInterval, 0)
 
         
-        let p10 = CalculationMethod.qatar.params
+        let p10 = CalculationMethodInput(calculationMethodType: .qatar, madhab: .shafi).calculationMethod.params
         XCTAssertEqual(p10.fajrAngle, 18)
         XCTAssertEqual(p10.ishaAngle, 0)
         XCTAssertEqual(p10.ishaInterval, 90)
 
         
-        let p11 = CalculationMethod.singapore.params
+        let p11 = CalculationMethodInput(calculationMethodType: .singapore, madhab: .shafi).calculationMethod.params
         XCTAssertEqual(p11.fajrAngle, 20)
         XCTAssertEqual(p11.ishaAngle, 18)
         XCTAssertEqual(p11.ishaInterval, 0)
         
-        let p12 = CalculationMethod.tehran.params
+        let p12 = CalculationMethodInput(calculationMethodType: .tehran, madhab: .shafi).calculationMethod.params
         XCTAssertEqual(p12.fajrAngle, 17.7)
         XCTAssertEqual(p12.maghribAngle, 4.5)
         XCTAssertEqual(p12.ishaAngle, 14)
@@ -122,8 +122,7 @@ class AdhanTests: XCTestCase {
         comps.year = 2015
         comps.month = 7
         comps.day = 12
-        var params = CalculationMethod.northAmerica.params
-        params.madhab = .hanafi
+        var params = CalculationMethodInput(calculationMethodType: .northAmerica, madhab: .hanafi).calculationMethod.params
         let p = PrayerTimes(coordinates: Coordinates(latitude: 35.7750, longitude: -78.6336), date: comps, calculationParameters: params)!
         
         let dateFormatter = DateFormatter()
@@ -151,8 +150,7 @@ class AdhanTests: XCTestCase {
         comps.month = 12
         comps.day = 1
         
-        var params = CalculationMethod.muslimWorldLeague.params
-        params.madhab = .shafi
+        var params = CalculationMethodInput(calculationMethodType: .muslimWorldLeague, madhab: .shafi).calculationMethod.params
         if let p = PrayerTimes(coordinates: Coordinates(latitude: 35.7750, longitude: -78.6336), date: comps, calculationParameters: params) {
             XCTAssertEqual(dateFormatter.string(from: p[.fajr].prayerTime), "5:35 AM")
             XCTAssertEqual(dateFormatter.string(from: p[.sunrise].prayerTime), "7:06 AM")
@@ -200,7 +198,7 @@ class AdhanTests: XCTestCase {
         comps.year = 2016
         comps.month = 1
         comps.day = 31
-        let p = PrayerTimes(coordinates: Coordinates(latitude: 35.7750, longitude: -78.6336), date: comps, calculationParameters: CalculationMethod.moonsightingCommittee.params)!
+        let p = PrayerTimes(coordinates: Coordinates(latitude: 35.7750, longitude: -78.6336), date: comps, calculationParameters: CalculationMethodInput(calculationMethodType: .moonsightingCommittee, madhab: .shafi).calculationMethod.params)!
         
         let dateFormatter = DateFormatter()
         dateFormatter.timeZone = TimeZone(identifier: "America/New_York")!
@@ -221,7 +219,7 @@ class AdhanTests: XCTestCase {
         comps.year = 2016
         comps.month = 1
         comps.day = 1
-        var params = CalculationMethod.moonsightingCommittee.params
+        var params = CalculationMethodInput(calculationMethodType: .moonsightingCommittee, madhab: .shafi).calculationMethod.params
         params.madhab = .hanafi
         let p = PrayerTimes(coordinates: Coordinates(latitude: 59.9094, longitude: 10.7349), date: comps, calculationParameters: params)!
         
@@ -244,7 +242,7 @@ class AdhanTests: XCTestCase {
         comps.year = 2016
         comps.month = 12
         comps.day = 15
-        let p = PrayerTimes(coordinates: Coordinates(latitude: 35.715298, longitude: 51.404343), date: comps, calculationParameters: CalculationMethod.tehran.params)!
+        let p = PrayerTimes(coordinates: Coordinates(latitude: 35.715298, longitude: 51.404343), date: comps, calculationParameters: CalculationMethodInput(calculationMethodType: .tehran, madhab: .shafi).calculationMethod.params)!
         
         let dateFormatter = DateFormatter()
         dateFormatter.timeZone = TimeZone(identifier: "Asia/Tehran")!
@@ -262,7 +260,7 @@ class AdhanTests: XCTestCase {
         comps2.year = 2019
         comps2.month = 6
         comps2.day = 16
-        let p2 = PrayerTimes(coordinates: Coordinates(latitude: 35.715298, longitude: 51.404343), date: comps2, calculationParameters: CalculationMethod.tehran.params)!
+        let p2 = PrayerTimes(coordinates: Coordinates(latitude: 35.715298, longitude: 51.404343), date: comps2, calculationParameters: CalculationMethodInput(calculationMethodType: .tehran, madhab: .shafi).calculationMethod.params)!
         
         XCTAssertEqual(dateFormatter.string(from: p2[.fajr].prayerTime), "4:01 AM")
         XCTAssertEqual(dateFormatter.string(from: p2[.sunrise].prayerTime), "5:48 AM")
@@ -275,7 +273,7 @@ class AdhanTests: XCTestCase {
     func testDiyanet() {
         // values from https://namazvakitleri.diyanet.gov.tr/en-US/9541/prayer-time-for-istanbul
         let coords = Coordinates(latitude: 41.005616, longitude: 28.976380)
-        let params = CalculationMethod.turkey.params
+        let params = CalculationMethodInput(calculationMethodType: .turkey, madhab: .shafi).calculationMethod.params
 
 
         let dateFormatter = DateFormatter()
@@ -300,7 +298,7 @@ class AdhanTests: XCTestCase {
 
     func testEgyptian() {
         let coords = Coordinates(latitude: 30.028703, longitude: 31.249528)
-        let params = CalculationMethod.egyptian.params
+        let params = CalculationMethodInput(calculationMethodType: .egyptian, madhab: .shafi).calculationMethod.params
 
 
         let dateFormatter = DateFormatter()
@@ -328,7 +326,7 @@ class AdhanTests: XCTestCase {
         comps.year = 2016
         comps.month = 7
         comps.day = 1
-        var params = CalculationMethod.muslimWorldLeague.params
+        var params = CalculationMethodInput(calculationMethodType: .muslimWorldLeague, madhab: .shafi).calculationMethod.params
         params.madhab = .hanafi
         params.highLatitudeRule = .twilightAngle
         let p = PrayerTimes(coordinates: Coordinates(latitude: 59.9094, longitude: 10.7349), date: comps, calculationParameters: params)!
@@ -345,7 +343,7 @@ class AdhanTests: XCTestCase {
         comps.year = 2015
         comps.month = 9
         comps.day = 1
-        var params = CalculationMethod.karachi.params
+        var params = CalculationMethodInput(calculationMethodType: .karachi, madhab: .shafi).calculationMethod.params
         params.madhab = .hanafi
         params.highLatitudeRule = .twilightAngle
         let p = PrayerTimes(coordinates: Coordinates(latitude: 33.720817, longitude: 73.090032), date: comps, calculationParameters: params)!
@@ -364,7 +362,7 @@ class AdhanTests: XCTestCase {
         comps.year = 2015
         comps.month = 9
         comps.day = 1
-        var params = CalculationMethod.karachi.params
+        var params = CalculationMethodInput(calculationMethodType: .karachi, madhab: .shafi).calculationMethod.params
         params.madhab = .hanafi
         params.highLatitudeRule = .twilightAngle
         
@@ -391,14 +389,14 @@ class AdhanTests: XCTestCase {
 
     func testInvalidDate() {
         let comps1 = DateComponents()
-        let p1 = PrayerTimes(coordinates: Coordinates(latitude: 33.720817, longitude: 73.090032), date: comps1, calculationParameters: CalculationMethod.muslimWorldLeague.params)
+        let p1 = PrayerTimes(coordinates: Coordinates(latitude: 33.720817, longitude: 73.090032), date: comps1, calculationParameters: CalculationMethodInput(calculationMethodType: .muslimWorldLeague, madhab: .shafi).calculationMethod.params)
         XCTAssertNil(p1)
 
         var comps2 = DateComponents()
         comps2.year = -1
         comps2.month = 99
         comps2.day = 99
-        let p2 = PrayerTimes(coordinates: Coordinates(latitude: 33.720817, longitude: 73.090032), date: comps1, calculationParameters: CalculationMethod.muslimWorldLeague.params)
+        let p2 = PrayerTimes(coordinates: Coordinates(latitude: 33.720817, longitude: 73.090032), date: comps1, calculationParameters: CalculationMethodInput(calculationMethodType: .muslimWorldLeague, madhab: .shafi).calculationMethod.params)
         XCTAssertNil(p2)
     }
 
@@ -407,7 +405,7 @@ class AdhanTests: XCTestCase {
         comps.year = 2019
         comps.month = 1
         comps.day = 1
-        let p1 = PrayerTimes(coordinates: Coordinates(latitude: 999, longitude: 999), date: comps, calculationParameters: CalculationMethod.muslimWorldLeague.params)
+        let p1 = PrayerTimes(coordinates: Coordinates(latitude: 999, longitude: 999), date: comps, calculationParameters: CalculationMethodInput(calculationMethodType: .muslimWorldLeague, madhab: .shafi).calculationMethod.params)
         XCTAssertNil(p1)
     }
 
@@ -416,20 +414,20 @@ class AdhanTests: XCTestCase {
         comps1.year = 2018
         comps1.month = 1
         comps1.day = 1
-        let p1 = PrayerTimes(coordinates: Coordinates(latitude: 71.275009, longitude: -156.761368), date: comps1, calculationParameters: CalculationMethod.muslimWorldLeague.params)
+        let p1 = PrayerTimes(coordinates: Coordinates(latitude: 71.275009, longitude: -156.761368), date: comps1, calculationParameters: CalculationMethodInput(calculationMethodType: .muslimWorldLeague, madhab: .shafi).calculationMethod.params)
         XCTAssertNil(p1)
 
         var comps2 = DateComponents()
         comps2.year = 2018
         comps2.month = 3
         comps2.day = 1
-        let p2 = PrayerTimes(coordinates: Coordinates(latitude: 71.275009, longitude: -156.761368), date: comps2, calculationParameters: CalculationMethod.muslimWorldLeague.params)
+        let p2 = PrayerTimes(coordinates: Coordinates(latitude: 71.275009, longitude: -156.761368), date: comps2, calculationParameters: CalculationMethodInput(calculationMethodType: .muslimWorldLeague, madhab: .shafi).calculationMethod.params)
         XCTAssertNotNil(p2)
     }
 
     func testHighLatitudeRule() {
         let coords = Coordinates(latitude: 55.983226, longitude: -3.216649)
-        var params = CalculationMethod.muslimWorldLeague.params
+        var params = CalculationMethodInput(calculationMethodType: .muslimWorldLeague, madhab: .shafi).calculationMethod.params
 
         let dateFormatter = DateFormatter()
         dateFormatter.timeZone = TimeZone(identifier: "Europe/London")!
@@ -493,7 +491,7 @@ class AdhanTests: XCTestCase {
     
     func testShafaqGeneral() {
         let coords = Coordinates(latitude: 43.494, longitude: -79.844)
-        var params = CalculationMethod.moonsightingCommittee.params
+        var params = CalculationMethodInput(calculationMethodType: .moonsightingCommittee, madhab: .shafi).calculationMethod.params
         params.shafaq = .general
         params.madhab = .hanafi
         
@@ -555,7 +553,7 @@ class AdhanTests: XCTestCase {
     
     func testShafaqAhmer() {
         let coords = Coordinates(latitude: 43.494, longitude: -79.844)
-        var params = CalculationMethod.moonsightingCommittee.params
+        var params = CalculationMethodInput(calculationMethodType: .moonsightingCommittee, madhab: .shafi).calculationMethod.params
         params.shafaq = .ahmer
         
         let dateFormatter = DateFormatter()
@@ -616,7 +614,7 @@ class AdhanTests: XCTestCase {
     
     func testShafaqAbyad() {
         let coords = Coordinates(latitude: 43.494, longitude: -79.844)
-        var params = CalculationMethod.moonsightingCommittee.params
+        var params = CalculationMethodInput(calculationMethodType: .moonsightingCommittee, madhab: .shafi).calculationMethod.params
         params.shafaq = .abyad
         params.madhab = .hanafi
         

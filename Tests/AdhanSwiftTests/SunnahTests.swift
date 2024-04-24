@@ -12,7 +12,7 @@ import XCTest
 class SunnahTests: XCTestCase {
     
     func testSunnahTimesNY() {
-        let params = CalculationMethod.northAmerica.params
+        let params = CalculationMethodInput(calculationMethodType: .northAmerica, madhab: .shafi).calculationMethod.params
         let coordinates = Coordinates(latitude: 35.7750, longitude: -78.6336)
         
         let dateFormatter = DateFormatter()
@@ -47,7 +47,7 @@ class SunnahTests: XCTestCase {
     }
     
     func testSunnahTimesLondon() {
-        let params = CalculationMethod.moonsightingCommittee.params
+        let params = CalculationMethodInput(calculationMethodType: .moonsightingCommittee, madhab: .shafi).calculationMethod.params
         let coordinates = Coordinates(latitude: 51.5074, longitude: -0.1278)
         
         let dateFormatter = DateFormatter()
@@ -82,7 +82,7 @@ class SunnahTests: XCTestCase {
     }
     
     func testSunnahTimesOslo() {
-        var params = CalculationMethod.muslimWorldLeague.params
+        var params = CalculationMethodInput(calculationMethodType: .muslimWorldLeague, madhab: .shafi).calculationMethod.params
         params.highLatitudeRule = .middleOfTheNight
         let coordinates = Coordinates(latitude: 59.9094, longitude: 10.7349)
         
@@ -119,7 +119,7 @@ class SunnahTests: XCTestCase {
     }
     
     func testSunnahTimesDST1() {
-        let params = CalculationMethod.northAmerica.params
+        let params = CalculationMethodInput(calculationMethodType: .northAmerica, madhab: .shafi).calculationMethod.params
         let coordinates = Coordinates(latitude: 37.7749, longitude: -122.4194)
         
         let dateFormatter = DateFormatter()
@@ -156,7 +156,7 @@ class SunnahTests: XCTestCase {
     }
     
     func testSunnahTimesDST2() {
-        var params = CalculationMethod.muslimWorldLeague.params
+        var params = CalculationMethodInput(calculationMethodType: .muslimWorldLeague, madhab: .shafi).calculationMethod.params
         params.highLatitudeRule = .seventhOfTheNight
         let coordinates = Coordinates(latitude: 48.8566, longitude: 2.3522)
         

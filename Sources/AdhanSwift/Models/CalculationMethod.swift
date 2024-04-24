@@ -24,6 +24,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 /**
  Preset calculation parameters for different regions.
@@ -90,13 +91,123 @@ import Foundation
  
  */
 
-public struct CalculationMethod: Codable, Equatable, Sendable {
-    public let name: String
+
+public enum CalculationMethodType: Int, CaseIterable, Codable, Identifiable {
+    public var id: RawValue {
+        rawValue
+    }
     
+    case muslimWorldLeague
     
+    case egyptian
+    
+    case karachi
+    
+    case ummAlQura
+    
+    case dubai
+    
+    case moonsightingCommittee
+    
+    case northAmerica
+
+    case kuwait
+    
+    case qatar
+    
+    case singapore
+    
+    case tehran
+    
+    case turkey
+}
+
+public struct CalculationMethodInput {
+    public var calculationMethodType: CalculationMethodType
+    
+    public var madhab: Madhab
+    
+    public var calculationMethod: CalculationMethod {
+        switch calculationMethodType {
+        case .muslimWorldLeague:
+            return .init(name: "Muslim World League",
+                        fajrAngle: 18,
+                        ishaAngle: .angle(17),
+                        methodTimeAdjustments: PrayerAdjustments(dhuhr: 1),
+                        madhab: madhab)
+        case .egyptian:
+            return .init(name: "Egyptian",
+                         fajrAngle: 19.5,
+                         ishaAngle: .angle(17.5),
+                         methodTimeAdjustments: PrayerAdjustments(dhuhr: 1),
+                         madhab: madhab)
+        case .karachi:
+            return .init(name: "Karachi",
+                         fajrAngle: 18,
+                         ishaAngle: .angle(18),
+                         methodTimeAdjustments: PrayerAdjustments(dhuhr: 1),
+                         madhab: madhab)
+        case .ummAlQura:
+            return .init(name: "Um Al Qura",
+                         fajrAngle: 18.5,
+                         ishaAngle: .time(90),
+                         madhab: madhab)
+        case .dubai:
+            return .init(name: "Dubai",
+                         fajrAngle: 18.2,
+                         ishaAngle: .angle(18.2),
+                         methodTimeAdjustments:  PrayerAdjustments(sunrise: -3, dhuhr: 3, asr: 3, maghrib: 3),
+                         madhab: madhab)
+        case .moonsightingCommittee:
+            return .init(name: "Moon-sighting Committee",
+                         fajrAngle: 18,
+                         ishaAngle: .angle(18),
+                         methodTimeAdjustments: PrayerAdjustments(dhuhr: 5, maghrib: 3),
+                         madhab: madhab, isMoonSightingCommittee: true)
+        case .northAmerica:
+            return .init(name: "Notrh America",
+                         fajrAngle: 15,
+                         ishaAngle: .angle(15),
+                         methodTimeAdjustments: PrayerAdjustments(dhuhr: 1),
+                         madhab: madhab)
+        case .kuwait:
+            return .init(name: "Kuwait",
+                         fajrAngle: 18,
+                         ishaAngle: .angle(17.5),
+                         madhab: madhab)
+        case .qatar:
+            return .init(name: "Qatar",
+                         fajrAngle: 18,
+                         ishaAngle: .time(90),
+                         madhab: madhab)
+        case .singapore:
+            return .init(name: "Singapore",
+                         fajrAngle: 20,
+                         ishaAngle: .angle(18),
+                         methodTimeAdjustments: PrayerAdjustments(dhuhr: 1),
+                         rounding: .up,
+                         madhab: madhab)
+        case .tehran:
+            return .init(name: "Tehran",
+                         fajrAngle: 17.7,
+                         maghribAngle: 4.5,
+                         ishaAngle: .angle(14),
+                         madhab: madhab)
+        case .turkey:
+            return .init(name: "Turkey",
+                         fajrAngle: 18,
+                         ishaAngle: .angle(17),
+                         methodTimeAdjustments: PrayerAdjustments(fajr: 0, sunrise: -7, dhuhr: 5, asr: 4, maghrib: 7, isha: 0),
+                         madhab: madhab)
+        }
+    }
+}
+
+public struct CalculationMethod: Equatable {
+    public let name: LocalizedStringKey
     public let params: CalculationParameters
     
-    public init(name: String, fajrAngle: Double, maghribAngle: Double? = nil,
+    public init(name: LocalizedStringKey, fajrAngle: Double, maghribAngle: Double? = nil,
                 ishaAngle: IshaPrayerAdjustments, methodTimeAdjustments: PrayerAdjustments = .init(),
                 rounding: Rounding = .nearest, madhab: Madhab = .shafi, shafaq: Shafaq = .general, isMoonSightingCommittee: Bool = false) {
         self.name = name
@@ -115,72 +226,3 @@ public struct CalculationMethod: Codable, Equatable, Sendable {
     }
     
 }
-
-public extension CalculationMethod {
-    
-    static let muslimWorldLeague = Self(name: "Muslim World League",
-                                        fajrAngle: 18,
-                                        ishaAngle: .angle(17),
-                                        methodTimeAdjustments: PrayerAdjustments(dhuhr: 1))
-    
-    static let egyptian = Self(name: "Egyptian",
-                               fajrAngle: 19.5,
-                               ishaAngle: .angle(17.5),
-                               
-                               
-                               methodTimeAdjustments: PrayerAdjustments(dhuhr: 1))
-    static let karachi = Self(name: "Karachi",
-                              fajrAngle: 18,
-                              ishaAngle: .angle(18),
-                              methodTimeAdjustments: PrayerAdjustments(dhuhr: 1))
-    
-    
-    static let ummAlQura = Self(name: "Um Al Qura",
-                                fajrAngle: 18.5,
-                                ishaAngle: .time(90))
-    
-    
-    static let dubai = Self(name: "Dubai",
-                            fajrAngle: 18.2,
-                            ishaAngle: .angle(18.2),
-                            methodTimeAdjustments:  PrayerAdjustments(sunrise: -3, dhuhr: 3, asr: 3, maghrib: 3))
-    
-    static let moonsightingCommittee = Self(name: "Moon-sighting Committee",
-                                            fajrAngle: 18,
-                                            ishaAngle: .angle(18),
-                                            methodTimeAdjustments: PrayerAdjustments(dhuhr: 5, maghrib: 3),
-                                            isMoonSightingCommittee: true)
-    
-    static let northAmerica = Self(name: "Notrh America",
-                                   fajrAngle: 15,
-                                   ishaAngle: .angle(15),
-                                   methodTimeAdjustments: PrayerAdjustments(dhuhr: 1))
-    
-    static let kuwait = Self(name: "Kuwait",
-                             fajrAngle: 18,
-                             ishaAngle: .angle(17.5))
-    
-    
-    static let qatar = Self(name: "Qatar",
-                            fajrAngle: 18,
-                            ishaAngle: .time(90))
-    
-    static let singapore = Self(name: "Singapore",
-                                fajrAngle: 20,
-                                ishaAngle: .angle(18),
-                                methodTimeAdjustments: PrayerAdjustments(dhuhr: 1),
-                                rounding: .up)
-    
-    static let tehran = Self(name: "Tehran",
-                             fajrAngle: 17.7,
-                             maghribAngle: 4.5,
-                             ishaAngle: .angle(14))
-    
-    static let turkey = Self(name: "Turkey",
-                             fajrAngle: 18,
-                             ishaAngle: .angle(17),
-                             methodTimeAdjustments: PrayerAdjustments(fajr: 0, sunrise: -7, dhuhr: 5, asr: 4, maghrib: 7, isha: 0))
-    
-    
-}
-

@@ -26,6 +26,7 @@
 import Foundation
 import SwiftUI
 import CoreLocation
+import Time
 
 enum Astronomical {
     /* The geometric mean longitude of the sun. */
@@ -202,6 +203,10 @@ enum Astronomical {
         let c = b - a
         return Angle(y2.degrees + ((n/2) * (a.degrees + b.degrees + (n * c.degrees))))
     }
+    
+    static func julianDay(_ day: Fixed<Day>) -> Double {
+        julianDay(year: day.year, month: day.month, day: day.day)
+    }
 
     /* The Julian Day for the given Gregorian date. */
     static func julianDay(year: Int, month: Int, day: Int, hours: Double = 0) -> Double {
@@ -278,6 +283,32 @@ enum Astronomical {
 
         return sunrise.addingTimeInterval(round(adjustment * -60.0))
     }
+    
+    static func seasonAdjustedMorningTwilight(latitude: Double, day: Int, year: Int, sunrise: Fixed<Second>) -> Fixed<Second> {
+        let a: Double = 75 + ((28.65 / 55.0) * fabs(latitude))
+        let b: Double = 75 + ((19.44 / 55.0) * fabs(latitude))
+        let c: Double = 75 + ((32.74 / 55.0) * fabs(latitude))
+        let d: Double = 75 + ((48.10 / 55.0) * fabs(latitude))
+
+        let adjustment: Double = {
+            let dyy = Double(Astronomical.daysSinceSolstice(dayOfYear: day, year: year, latitude: latitude))
+            if ( dyy < 91) {
+                return a + ( b - a ) / 91.0 * dyy
+            } else if ( dyy < 137) {
+                return b + ( c - b ) / 46.0 * ( dyy - 91 )
+            } else if ( dyy < 183 ) {
+                return c + ( d - c ) / 46.0 * ( dyy - 137 )
+            } else if ( dyy < 229 ) {
+                return d + ( c - d ) / 46.0 * ( dyy - 183 )
+            } else if ( dyy < 275 ) {
+                return c + ( b - c ) / 46.0 * ( dyy - 229 )
+            }
+
+            return b + ( a - b ) / 91.0 * ( dyy - 275 )
+        }()
+
+        return sunrise.adding(seconds: Int((round(adjustment * -60.0))))
+    }
 
     /* Twilight adjustment based on observational data for use in the Moonlighting Committee calculation method. */
     static func seasonAdjustedEveningTwilight(latitude: Double, day: Int, year: Int, sunset: Date, shafaq: Shafaq) -> Date {
@@ -319,6 +350,47 @@ enum Astronomical {
         }()
 
         return sunset.addingTimeInterval(round(adjustment * 60.0))
+    }
+    
+    /* Twilight adjustment based on observational data for use in the Moonlighting Committee calculation method. */
+    static func seasonAdjustedEveningTwilight(latitude: Double, day: Int, year: Int, sunset: Fixed<Second>, shafaq: Shafaq) -> Fixed<Second> {
+        let a, b, c, d: Double
+        
+        switch shafaq {
+        case .general:
+            a = 75 + ((25.60 / 55.0) * fabs(latitude))
+            b = 75 + ((2.050 / 55.0) * fabs(latitude))
+            c = 75 - ((9.210 / 55.0) * fabs(latitude))
+            d = 75 + ((6.140 / 55.0) * fabs(latitude))
+        case .ahmer:
+            a = 62 + ((17.40 / 55.0) * fabs(latitude))
+            b = 62 - ((7.160 / 55.0) * fabs(latitude))
+            c = 62 + ((5.120 / 55.0) * fabs(latitude))
+            d = 62 + ((19.44 / 55.0) * fabs(latitude))
+        case .abyad:
+            a = 75 + ((25.60 / 55.0) * fabs(latitude))
+            b = 75 + ((7.160 / 55.0) * fabs(latitude))
+            c = 75 + ((36.84 / 55.0) * fabs(latitude))
+            d = 75 + ((81.84 / 55.0) * fabs(latitude))
+        }
+        
+        let adjustment: Double = {
+            let dyy = Double(Astronomical.daysSinceSolstice(dayOfYear: day, year: year, latitude: latitude))
+            if ( dyy < 91) {
+                return a + ( b - a ) / 91.0 * dyy
+            } else if ( dyy < 137) {
+                return b + ( c - b ) / 46.0 * ( dyy - 91 )
+            } else if ( dyy < 183 ) {
+                return c + ( d - c ) / 46.0 * ( dyy - 137 )
+            } else if ( dyy < 229 ) {
+                return d + ( c - d ) / 46.0 * ( dyy - 183 )
+            } else if ( dyy < 275 ) {
+                return c + ( b - c ) / 46.0 * ( dyy - 229 )
+            }
+
+            return b + ( a - b ) / 91.0 * ( dyy - 275 )
+        }()
+        return sunset.adding(seconds: Int(round(adjustment * 60.0)))
     }
 
     /* Solstice calculation to determine a date's seasonal progression. Used in the Moonsighting Committee calculation method. */

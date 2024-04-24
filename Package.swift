@@ -5,7 +5,7 @@ import PackageDescription
 
 let package = Package(
     name: "AdhanSwift",
-    platforms: [.macOS(.v10_15), .iOS(.v13), .tvOS(.v16) ] ,
+    platforms: [.macOS(.v14), .iOS(.v16), .tvOS(.v16) ] ,
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
@@ -13,11 +13,12 @@ let package = Package(
             targets: ["AdhanSwift"]),
         
     ],
+    dependencies: [.package(url: "https://github.com/davedelong/time", from: "1.0.1")],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
-            name: "AdhanSwift"),
+            name: "AdhanSwift", dependencies: [.product(name: "Time", package: "time")]),
         .testTarget(
             name: "AdhanSwiftTests",
             dependencies: ["AdhanSwift"]),

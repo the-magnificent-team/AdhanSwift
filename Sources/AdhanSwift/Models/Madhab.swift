@@ -42,3 +42,9 @@ public enum Madhab: String, Codable, CaseIterable, Sendable {
         }
     }
 }
+
+extension Madhab: Identifiable {
+    public var id: String {
+        rawValue
+    }
+}
