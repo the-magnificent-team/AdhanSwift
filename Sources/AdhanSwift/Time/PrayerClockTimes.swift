@@ -42,7 +42,6 @@ public extension PrayerClockTimes {
         let nextDay = day.nextDay
         
         let solarTime = try SolarClockTime(day: day, coordinates: coordinates)
-        let tomorrowSolarTime = try SolarClockTime(day: nextDay, coordinates: coordinates)
         
         
         let sunrise = solarTime.sunriseTime
@@ -141,7 +140,7 @@ public extension PrayerClockTimes {
         switch calculationParameters.ishaPrayerAdjustments {
             
         case .angle:
-            isha = (try? solarTime.timeForSolarAngle(Angle(-calculationParameters.ishaAngle), afterTransit: true)) ?? sunset
+            isha = try solarTime.timeForSolarAngle(Angle(-calculationParameters.ishaAngle), afterTransit: true)
 
             // special case for moonsighting committee above latitude 55
             if calculationParameters.isMoonSightingCommittee && coordinates.latitude >= 55 {

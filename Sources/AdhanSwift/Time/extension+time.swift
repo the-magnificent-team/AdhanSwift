@@ -60,13 +60,6 @@ extension Fixed where Granularity == Day {
         return try setting(hour: hour == 24 ? 0 : hour, minute: minute, second: second)
     }
     
-    func convertSecondsToTimeComponents(seconds: Int) -> (hour: Int, minute: Int, second: Int) {
-        let hour = seconds / 3600
-        let minute = (seconds % 3600) / 60
-        let second = (seconds % 3600) % 60
-        return (hour, minute, second)
-    }
-    
     private func convertToTimeComponents(from hours: Double) -> (hour: Int, minute: Int, second: Int) {
         let totalSeconds = Int(hours * 3600)
         let hour = totalSeconds / 3600
@@ -76,6 +69,12 @@ extension Fixed where Granularity == Day {
     }
     
     func settingHour(_ hour: Double) throws -> Fixed<Second> {
+        if hour >= 24.0 {
+            let day = nextDay
+            let newHour = hour - 24.0
+            let (h, m, s) = convertToTimeComponents(from: newHour)
+            return try day.setting(hour: h, minute: m, second: s)
+        }
         let (h, m, s) = convertToTimeComponents(from: hour)
         return try setting(hour: h, minute: m, second: s)
     }

@@ -120,6 +120,36 @@ public enum CalculationMethodType: Int, CaseIterable, Codable, Identifiable {
     case tehran
     
     case turkey
+    
+     
+    public var localizedName: LocalizedStringKey {
+        switch self {
+        case .muslimWorldLeague:
+            "Muslim World League"
+        case .egyptian:
+            "Egyptian"
+        case .karachi:
+            "Karachi"
+        case .ummAlQura:
+            "Um Al Qura"
+        case .dubai:
+            "Dubai"
+        case .moonsightingCommittee:
+            "Moon-sighting Committee"
+        case .northAmerica:
+            "North America"
+        case .kuwait:
+            "Kuwait"
+        case .qatar:
+            "Qatar"
+        case .singapore:
+            "Singapore"
+        case .tehran:
+            "Tehran"
+        case .turkey:
+            "Turkey"
+        }
+    }
 }
 
 public struct CalculationMethodInput {
@@ -127,74 +157,79 @@ public struct CalculationMethodInput {
     
     public var madhab: Madhab
     
+    public init(calculationMethodType: CalculationMethodType, madhab: Madhab) {
+        self.calculationMethodType = calculationMethodType
+        self.madhab = madhab
+    }
+    
     public var calculationMethod: CalculationMethod {
         switch calculationMethodType {
         case .muslimWorldLeague:
-            return .init(name: "Muslim World League",
+            return .init(name: calculationMethodType.localizedName,
                         fajrAngle: 18,
                         ishaAngle: .angle(17),
                         methodTimeAdjustments: PrayerAdjustments(dhuhr: 1),
                         madhab: madhab)
         case .egyptian:
-            return .init(name: "Egyptian",
+            return .init(name: calculationMethodType.localizedName,
                          fajrAngle: 19.5,
                          ishaAngle: .angle(17.5),
                          methodTimeAdjustments: PrayerAdjustments(dhuhr: 1),
                          madhab: madhab)
         case .karachi:
-            return .init(name: "Karachi",
+            return .init(name: calculationMethodType.localizedName,
                          fajrAngle: 18,
                          ishaAngle: .angle(18),
                          methodTimeAdjustments: PrayerAdjustments(dhuhr: 1),
                          madhab: madhab)
         case .ummAlQura:
-            return .init(name: "Um Al Qura",
+            return .init(name: calculationMethodType.localizedName,
                          fajrAngle: 18.5,
                          ishaAngle: .time(90),
                          madhab: madhab)
         case .dubai:
-            return .init(name: "Dubai",
+            return .init(name: calculationMethodType.localizedName,
                          fajrAngle: 18.2,
                          ishaAngle: .angle(18.2),
                          methodTimeAdjustments:  PrayerAdjustments(sunrise: -3, dhuhr: 3, asr: 3, maghrib: 3),
                          madhab: madhab)
         case .moonsightingCommittee:
-            return .init(name: "Moon-sighting Committee",
+            return .init(name: calculationMethodType.localizedName,
                          fajrAngle: 18,
                          ishaAngle: .angle(18),
                          methodTimeAdjustments: PrayerAdjustments(dhuhr: 5, maghrib: 3),
                          madhab: madhab, isMoonSightingCommittee: true)
         case .northAmerica:
-            return .init(name: "Notrh America",
+            return .init(name: calculationMethodType.localizedName,
                          fajrAngle: 15,
                          ishaAngle: .angle(15),
                          methodTimeAdjustments: PrayerAdjustments(dhuhr: 1),
                          madhab: madhab)
         case .kuwait:
-            return .init(name: "Kuwait",
+            return .init(name: calculationMethodType.localizedName,
                          fajrAngle: 18,
                          ishaAngle: .angle(17.5),
                          madhab: madhab)
         case .qatar:
-            return .init(name: "Qatar",
+            return .init(name: calculationMethodType.localizedName,
                          fajrAngle: 18,
                          ishaAngle: .time(90),
                          madhab: madhab)
         case .singapore:
-            return .init(name: "Singapore",
+            return .init(name: calculationMethodType.localizedName,
                          fajrAngle: 20,
                          ishaAngle: .angle(18),
                          methodTimeAdjustments: PrayerAdjustments(dhuhr: 1),
                          rounding: .up,
                          madhab: madhab)
         case .tehran:
-            return .init(name: "Tehran",
+            return .init(name: calculationMethodType.localizedName,
                          fajrAngle: 17.7,
                          maghribAngle: 4.5,
                          ishaAngle: .angle(14),
                          madhab: madhab)
         case .turkey:
-            return .init(name: "Turkey",
+            return .init(name: calculationMethodType.localizedName,
                          fajrAngle: 18,
                          ishaAngle: .angle(17),
                          methodTimeAdjustments: PrayerAdjustments(fajr: 0, sunrise: -7, dhuhr: 5, asr: 4, maghrib: 7, isha: 0),

@@ -8,6 +8,8 @@
 
 import XCTest
 @testable import AdhanSwift
+import Time
+import CoreLocation
 
 class SunnahTests: XCTestCase {
     
@@ -155,7 +157,7 @@ class SunnahTests: XCTestCase {
         XCTAssertEqual(dateFormatter.string(from: sunnahTimes.lastThirdOfTheNight), "3/12/17, 1:33 AM")
     }
     
-    func testSunnahTimesDST2() {
+    func testSunnahTimesDST2() throws {
         var params = CalculationMethodInput(calculationMethodType: .muslimWorldLeague, madhab: .shafi).calculationMethod.params
         params.highLatitudeRule = .seventhOfTheNight
         let coordinates = Coordinates(latitude: 48.8566, longitude: 2.3522)
