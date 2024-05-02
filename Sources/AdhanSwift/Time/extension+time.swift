@@ -40,26 +40,23 @@ extension Fixed where Granularity == Second {
     }
 }
 
-
-
 extension Fixed where Granularity == Day {
     func settingSeconds(from astronomicalTime: Double) throws -> Fixed<Second> {
         guard astronomicalTime.isNormal else {
             throw PrayerTimesError.astronomicalTimeMustBeNormal
         }
-        
-        
+
         let calculatedHours = floor(astronomicalTime)
         let calculatedMinutes = floor((astronomicalTime - calculatedHours) * 60)
-        let calculatedSeconds = floor((astronomicalTime - (calculatedHours + calculatedMinutes/60)) * 60 * 60)
-        
+        let calculatedSeconds = floor((astronomicalTime - (calculatedHours + calculatedMinutes / 60)) * 60 * 60)
+
         let hour = Int(calculatedHours)
         let minute = Int(calculatedMinutes)
         let second = Int(calculatedSeconds)
-     
+
         return try setting(hour: hour == 24 ? 0 : hour, minute: minute, second: second)
     }
-    
+
     private func convertToTimeComponents(from hours: Double) -> (hour: Int, minute: Int, second: Int) {
         let totalSeconds = Int(hours * 3600)
         let hour = totalSeconds / 3600
@@ -67,7 +64,7 @@ extension Fixed where Granularity == Day {
         let second = (totalSeconds % 3600) % 60
         return (hour, minute, second)
     }
-    
+
     func settingHour(_ hour: Double) throws -> Fixed<Second> {
         if hour >= 24.0 {
             let day = nextDay

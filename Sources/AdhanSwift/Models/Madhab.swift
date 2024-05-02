@@ -24,11 +24,10 @@
 //
 
 import Foundation
-
+import SwiftUI
 
 /* Madhab for determining how Asr is calculated */
 public enum Madhab: String, Codable, CaseIterable, Sendable {
-    
     case hanafi
     // Also for Maliki, Hanbali, and Jafari
     case shafi
@@ -39,6 +38,15 @@ public enum Madhab: String, Codable, CaseIterable, Sendable {
             return 2
         default:
             return 1
+        }
+    }
+
+    public var localizedString: LocalizedStringKey {
+        switch self {
+        case .hanafi:
+            "Hanafi"
+        case .shafi:
+            "Shafi"
         }
     }
 }

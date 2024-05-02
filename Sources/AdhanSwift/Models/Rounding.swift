@@ -30,7 +30,7 @@ public enum Rounding: String, Codable, CaseIterable, Sendable {
     case nearest
     case up
     case none
-    
+
     var roundingDirection: RoundingDirection {
         switch self {
         case .nearest, .none:

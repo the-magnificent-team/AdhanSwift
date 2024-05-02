@@ -26,21 +26,20 @@
 import Foundation
 import SwiftUI
 
-internal extension Date {
-
+extension Date {
     func roundedMinute(rounding: Rounding = .nearest) -> Date {
         let cal: Calendar = .gregorianUTC
         var components = cal.dateComponents([.year, .month, .day, .hour, .minute, .second], from: self)
 
-        let minute: Double = Double(components.minute ?? 0)
-        let second: Double = Double(components.second ?? 0)
+        let minute = Double(components.minute ?? 0)
+        let second = Double(components.second ?? 0)
 
         switch rounding {
         case .nearest:
-            components.minute = Int(minute + round(second/60))
+            components.minute = Int(minute + round(second / 60))
             components.second = 0
         case .up:
-            components.minute = Int(minute + ceil(second/60))
+            components.minute = Int(minute + ceil(second / 60))
             components.second = 0
         case .none:
             components.minute = Int(minute)
@@ -51,28 +50,26 @@ internal extension Date {
     }
 }
 
-internal extension DateComponents {
-    
+extension DateComponents {
     func settingHour(_ value: Double) -> DateComponents? {
         guard value.isNormal else {
             return nil
         }
-        
+
         let calculatedHours = floor(value)
         let calculatedMinutes = floor((value - calculatedHours) * 60)
-        let calculatedSeconds = floor((value - (calculatedHours + calculatedMinutes/60)) * 60 * 60)
-        
+        let calculatedSeconds = floor((value - (calculatedHours + calculatedMinutes / 60)) * 60 * 60)
+
         var components = self
         components.hour = Int(calculatedHours)
         components.minute = Int(calculatedMinutes)
         components.second = Int(calculatedSeconds)
-        
+
         return components
     }
 }
 
 public extension Calendar {
-    
     /// All calculations are done using a gregorian calendar with the UTC timezone
     static let gregorianUTC: Calendar = {
         guard let utc = TimeZone(identifier: "UTC") else {
@@ -83,7 +80,7 @@ public extension Calendar {
         cal.timeZone = utc
         return cal
     }()
-    
+
     func prayerDateComponent(from date: Date) -> DateComponents {
         dateComponents([.year, .month, .day], from: date)
     }

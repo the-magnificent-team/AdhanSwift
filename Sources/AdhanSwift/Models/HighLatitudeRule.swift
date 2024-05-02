@@ -23,8 +23,8 @@
 //  THE SOFTWARE.
 //
 
-import Foundation
 import CoreLocation
+import Foundation
 
 /**
   Rule for approximating Fajr and Isha at high latitudes

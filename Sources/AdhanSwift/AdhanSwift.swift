@@ -1,5 +1,5 @@
 //
-//  Qibla.swift
+//  AdhanSwift.swift
 //  Adhan
 //
 //  Copyright © 2018 Batoul Apps. All rights reserved.
@@ -23,20 +23,20 @@
 //  THE SOFTWARE.
 //
 
+import CoreLocation
 import Foundation
 import SwiftUI
-import CoreLocation
 
 public struct Prayer: Equatable, Hashable, Codable, Sendable, Identifiable {
     public let prayerName: Name
-    
+
     /// prayer time in GTC
     public let prayerTime: Date
-    
+
     public var id: Name {
         prayerName
     }
-    
+
     public enum Name: String, Codable, Hashable, Sendable, CaseIterable {
         case fajr
         case sunrise
@@ -49,29 +49,24 @@ public struct Prayer: Equatable, Hashable, Codable, Sendable, Identifiable {
 
 public struct PrayerTimes: Sendable {
     public let prayers: [Prayer]
-    
+
     public let coordinates: Coordinates
-    
+
     public let calculationParameters: CalculationParameters
-    
+
     public let dateComponent: DateComponents
-    
-    
+
     public func currentPrayer(at time: Date = Date()) -> Prayer? {
-        
         prayers.last {
             $0.prayerTime.timeIntervalSince(time) <= 0
         }
-       
     }
-    
+
     subscript(_ name: Prayer.Name) -> Prayer {
         prayers.first {
             $0.prayerName == name
         }!
     }
-    
-    
 
     public func nextPrayer(at time: Date = Date()) -> Prayer? {
         guard let prayer = prayers.last(where: {
@@ -82,12 +77,12 @@ public struct PrayerTimes: Sendable {
                let nextDay = cal.date(byAdding: .day, value: 1, to: date),
                let nextDayPrayers = PrayerTimes(coordinates: coordinates,
                                                 date: cal.dateComponents([.year, .month, .day], from: nextDay),
-                                                calculationParameters: calculationParameters) {
+                                                calculationParameters: calculationParameters)
+            {
                 return nextDayPrayers[.fajr]
             }
             return nil
         }
-       
 
         guard let index = prayers.lastIndex(of: prayer) else { return nil }
 
@@ -105,7 +100,6 @@ public struct PrayerTimes: Sendable {
  All prayer times are in UTC and should be displayed using a DateFormatter that
  has the correct timezone set. */
 public struct SunnahTimes {
-
     /* The midpoint between Maghrib and Fajr */
     public let middleOfTheNight: Date
 
@@ -114,29 +108,29 @@ public struct SunnahTimes {
     public let lastThirdOfTheNight: Date
 }
 
-extension SunnahTimes {
-    public init?(from prayerTimes: PrayerTimes) {
-        
+public extension SunnahTimes {
+    init?(from prayerTimes: PrayerTimes) {
         guard let date = Calendar.gregorianUTC.date(from: prayerTimes.dateComponent),
-            let nextDay = Calendar.gregorianUTC.date(byAdding: .day, value: 1, to: date),
-            let nextDayPrayerTimes = PrayerTimes(
-                coordinates: prayerTimes.coordinates,
-                date: Calendar.gregorianUTC.dateComponents([.year, .month, .day], from: nextDay),
-                calculationParameters: prayerTimes.calculationParameters)
-            else {
-                // unable to determine tomorrow prayer times
-                return nil
+              let nextDay = Calendar.gregorianUTC.date(byAdding: .day, value: 1, to: date),
+              let nextDayPrayerTimes = PrayerTimes(
+                  coordinates: prayerTimes.coordinates,
+                  date: Calendar.gregorianUTC.dateComponents([.year, .month, .day], from: nextDay),
+                  calculationParameters: prayerTimes.calculationParameters
+              )
+        else {
+            // unable to determine tomorrow prayer times
+            return nil
         }
         let maghribTime = prayerTimes[.maghrib].prayerTime
 
         let nightDuration = nextDayPrayerTimes[.fajr].prayerTime.timeIntervalSince(maghribTime)
-        self.middleOfTheNight = maghribTime.addingTimeInterval(nightDuration / 2).roundedMinute()
-        self.lastThirdOfTheNight = maghribTime.addingTimeInterval(nightDuration * (2 / 3)).roundedMinute()
+        middleOfTheNight = maghribTime.addingTimeInterval(nightDuration / 2).roundedMinute()
+        lastThirdOfTheNight = maghribTime.addingTimeInterval(nightDuration * (2 / 3)).roundedMinute()
     }
 }
 
-
 // MARK: Qibla
+
 public struct Qibla {
     /* The heading to the Qibla from True North */
     public let direction: Double
@@ -153,47 +147,46 @@ public struct Qibla {
     }
 }
 
-
 // MARK: extension
+
 public extension PrayerTimes {
-    
     init?(coordinates: Coordinates, date: DateComponents, method: CalculationMethodInput) {
         self.init(coordinates: coordinates, date: date, calculationParameters: method.calculationMethod.params)
     }
-    
-    
+
     init?(coordinates: Coordinates, date: DateComponents, calculationParameters: CalculationParameters) {
-        
-        var tempFajr: Date? = nil
-        var tempSunrise: Date? = nil
-        var tempDhuhr: Date? = nil
-        var tempAsr: Date? = nil
-        var tempMaghrib: Date? = nil
-        var tempIsha: Date? = nil
+        var tempFajr: Date?
+        var tempSunrise: Date?
+        var tempDhuhr: Date?
+        var tempAsr: Date?
+        var tempMaghrib: Date?
+        var tempIsha: Date?
         let cal = Calendar.gregorianUTC
-        
+
         guard let prayerDate = cal.date(from: date),
               let tomorrowDate = cal.date(byAdding: .day, value: 1, to: prayerDate),
               let year = date.year,
-              let dayOfYear = cal.ordinality(of: .day, in: .year, for: prayerDate) else {
-              return nil
-          }
-        
-        let tomorrow = cal.dateComponents([.year, .month, .day], from: tomorrowDate)
-        
-        guard let solarTime = SolarTime(date: date, coordinates: coordinates),
-            let tomorrowSolarTime = SolarTime(date: tomorrow, coordinates: coordinates),
-            let sunriseDate = cal.date(from: solarTime.sunrise),
-            let sunsetDate = cal.date(from: solarTime.sunset),
-            let tomorrowSunrise = cal.date(from: tomorrowSolarTime.sunrise) else {
-                // unable to determine transit, sunrise or sunset aborting calculations
-                return nil
+              let dayOfYear = cal.ordinality(of: .day, in: .year, for: prayerDate)
+        else {
+            return nil
         }
-        
+
+        let tomorrow = cal.dateComponents([.year, .month, .day], from: tomorrowDate)
+
+        guard let solarTime = SolarTime(date: date, coordinates: coordinates),
+              let tomorrowSolarTime = SolarTime(date: tomorrow, coordinates: coordinates),
+              let sunriseDate = cal.date(from: solarTime.sunrise),
+              let sunsetDate = cal.date(from: solarTime.sunset),
+              let tomorrowSunrise = cal.date(from: tomorrowSolarTime.sunrise)
+        else {
+            // unable to determine transit, sunrise or sunset aborting calculations
+            return nil
+        }
+
         tempSunrise = cal.date(from: solarTime.sunrise)
         tempMaghrib = cal.date(from: solarTime.sunset)
         tempDhuhr = cal.date(from: solarTime.transit)
-        
+
         if let asrComponents = solarTime.afternoon(shadowLength: calculationParameters.madhab.shadowLength) {
             tempAsr = cal.date(from: asrComponents)
         }
@@ -210,7 +203,7 @@ public extension PrayerTimes {
             let nightFraction = night / 7
             tempFajr = sunriseDate.addingTimeInterval(-nightFraction)
         }
-        
+
         let safeFajr: Date = {
             guard !calculationParameters.isMoonSightingCommittee else {
                 return Astronomical.seasonAdjustedMorningTwilight(latitude: coordinates.latitude, day: dayOfYear, year: year, sunrise: sunriseDate)
@@ -227,9 +220,8 @@ public extension PrayerTimes {
         }
 
         // Isha calculation with check against safe value
-        
+
         switch calculationParameters.ishaPrayerAdjustments {
-            
         case .angle:
             if let ishaComponents = solarTime.timeForSolarAngle(Angle(-calculationParameters.ishaAngle), afterTransit: true) {
                 tempIsha = cal.date(from: ishaComponents)
@@ -242,7 +234,7 @@ public extension PrayerTimes {
             }
 
             let safeIsha: Date = {
-                guard !calculationParameters.isMoonSightingCommittee  else {
+                guard !calculationParameters.isMoonSightingCommittee else {
                     return Astronomical.seasonAdjustedEveningTwilight(latitude: coordinates.latitude, day: dayOfYear, year: year, sunset: sunsetDate, shafaq: calculationParameters.shafaq)
                 }
 
@@ -258,27 +250,28 @@ public extension PrayerTimes {
         case let .time(min):
             tempIsha = tempMaghrib?.addingTimeInterval(min.timeInterval)
         }
-    
-        
+
         // Maghrib calculation with check against safe value
         if let maghribAngle = calculationParameters.maghribAngle,
-            let maghribComponents = solarTime.timeForSolarAngle(Angle(-maghribAngle), afterTransit: true),
-            let maghribDate = cal.date(from: maghribComponents),
-            // maghrib is considered safe if it falls between sunset and isha
-            sunsetDate < maghribDate, (tempIsha?.compare(maghribDate) == .orderedDescending || tempIsha == nil) {
-                tempMaghrib = maghribDate
+           let maghribComponents = solarTime.timeForSolarAngle(Angle(-maghribAngle), afterTransit: true),
+           let maghribDate = cal.date(from: maghribComponents),
+           // maghrib is considered safe if it falls between sunset and isha
+           sunsetDate < maghribDate, tempIsha?.compare(maghribDate) == .orderedDescending || tempIsha == nil
+        {
+            tempMaghrib = maghribDate
         }
-        
+
         // if we don't have all prayer times then initialization failed
         guard let fajr = tempFajr,
-            let sunrise = tempSunrise,
-            let dhuhr = tempDhuhr,
-            let asr = tempAsr,
-            let maghrib = tempMaghrib,
-            let isha = tempIsha else {
-                return nil
+              let sunrise = tempSunrise,
+              let dhuhr = tempDhuhr,
+              let asr = tempAsr,
+              let maghrib = tempMaghrib,
+              let isha = tempIsha
+        else {
+            return nil
         }
-        
+
         // Assign final times to public struct members with all offsets
         let _fajr = fajr.addingTimeInterval(calculationParameters.adjustments.fajr.timeInterval)
             .addingTimeInterval(calculationParameters.methodAdjustments.fajr.timeInterval)
@@ -303,19 +296,17 @@ public extension PrayerTimes {
         let _isha = isha.addingTimeInterval(calculationParameters.adjustments.isha.timeInterval)
             .addingTimeInterval(calculationParameters.methodAdjustments.isha.timeInterval)
             .roundedMinute(rounding: calculationParameters.rounding)
-        
-        
+
         prayers = [
             .init(prayerName: .fajr, prayerTime: _fajr),
             .init(prayerName: .sunrise, prayerTime: _sunrise),
             .init(prayerName: .dhuhr, prayerTime: _dhuhr),
             .init(prayerName: .asr, prayerTime: _asr),
             .init(prayerName: .maghrib, prayerTime: _maghrib),
-            .init(prayerName: .isha, prayerTime: _isha)
-            
+            .init(prayerName: .isha, prayerTime: _isha),
         ]
         self.coordinates = coordinates
         self.calculationParameters = calculationParameters
-        self.dateComponent = date
+        dateComponent = date
     }
 }

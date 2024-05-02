@@ -23,9 +23,9 @@
 //  THE SOFTWARE.
 //
 
+import CoreLocation
 import Foundation
 import SwiftUI
-import CoreLocation
 import Time
 
 enum Astronomical {
@@ -43,7 +43,7 @@ enum Astronomical {
     static func meanLunarLongitude(julianCentury T: Double) -> Angle {
         /* Equation from Astronomical Algorithms page 144 */
         let term1 = 218.3165
-        let term2 = 481267.8813 * T
+        let term2 = 481_267.8813 * T
         let Lp = term1 + term2
         return Angle(Lp).unwound()
     }
@@ -53,7 +53,7 @@ enum Astronomical {
         let term1 = 125.04452
         let term2 = 1934.136261 * T
         let term3 = 0.0020708 * pow(T, 2)
-        let term4 = pow(T, 3) / 450000
+        let term4 = pow(T, 3) / 450_000
         let Ω = term1 - term2 + term3 + term4
         return Angle(Ω).unwound()
     }
@@ -103,37 +103,37 @@ enum Astronomical {
      calculating the apparent position of the sun. */
     static func apparentObliquityOfTheEcliptic(julianCentury T: Double, meanObliquityOfTheEcliptic ε0: Angle) -> Angle {
         /* Equation from Astronomical Algorithms page 165 */
-        let O: Double = 125.04 - (1934.136 * T)
+        let O = 125.04 - (1934.136 * T)
         return Angle(ε0.degrees + (0.00256 * cos(Angle(O).radians)))
     }
 
     /* Mean sidereal time, the hour angle of the vernal equinox. */
     static func meanSiderealTime(julianCentury T: Double) -> Angle {
         /* Equation from Astronomical Algorithms page 165 */
-        let JD = (T * 36525) + 2451545.0
+        let JD = (T * 36525) + 2_451_545.0
         let term1 = 280.46061837
-        let term2 = 360.98564736629 * (JD - 2451545)
+        let term2 = 360.98564736629 * (JD - 2_451_545)
         let term3 = 0.000387933 * pow(T, 2)
-        let term4 = pow(T, 3) / 38710000
+        let term4 = pow(T, 3) / 38_710_000
         let θ = term1 + term2 + term3 - term4
         return Angle(θ).unwound()
     }
 
     static func nutationInLongitude(solarLongitude L0: Angle, lunarLongitude Lp: Angle, ascendingNode Ω: Angle) -> Double {
         /* Equation from Astronomical Algorithms page 144 */
-        let term1 = (-17.2/3600) * sin(Ω.radians)
-        let term2 =  (1.32/3600) * sin(2 * L0.radians)
-        let term3 =  (0.23/3600) * sin(2 * Lp.radians)
-        let term4 =  (0.21/3600) * sin(2 * Ω.radians)
+        let term1 = (-17.2 / 3600) * sin(Ω.radians)
+        let term2 = (1.32 / 3600) * sin(2 * L0.radians)
+        let term3 = (0.23 / 3600) * sin(2 * Lp.radians)
+        let term4 = (0.21 / 3600) * sin(2 * Ω.radians)
         return term1 - term2 - term3 + term4
     }
 
     static func nutationInObliquity(solarLongitude L0: Angle, lunarLongitude Lp: Angle, ascendingNode Ω: Angle) -> Double {
         /* Equation from Astronomical Algorithms page 144 */
-        let term1 =  (9.2/3600) * cos(Ω.radians)
-        let term2 = (0.57/3600) * cos(2 * L0.radians)
-        let term3 = (0.10/3600) * cos(2 * Lp.radians)
-        let term4 = (0.09/3600) * cos(2 * Ω.radians)
+        let term1 = (9.2 / 3600) * cos(Ω.radians)
+        let term2 = (0.57 / 3600) * cos(2 * L0.radians)
+        let term3 = (0.10 / 3600) * cos(2 * Lp.radians)
+        let term4 = (0.09 / 3600) * cos(2 * Ω.radians)
         return term1 + term2 + term3 - term4
     }
 
@@ -152,7 +152,8 @@ enum Astronomical {
 
     /* The time at which the sun is at its highest point in the sky (in universal time) */
     static func correctedTransit(approximateTransit m0: Double, longitude L: Angle, siderealTime Θ0: Angle,
-                                 rightAscension α2: Angle, previousRightAscension α1: Angle, nextRightAscension α3: Angle) -> Double {
+                                 rightAscension α2: Angle, previousRightAscension α1: Angle, nextRightAscension α3: Angle) -> Double
+    {
         /* Equation from page Astronomical Algorithms 102 */
         let Lw = L * -1
         let θ = Angle(Θ0.degrees + (360.985647 * m0)).unwound()
@@ -164,7 +165,8 @@ enum Astronomical {
 
     static func correctedHourAngle(approximateTransit m0: Double, angle h0: Angle, coordinates: Coordinates, afterTransit: Bool, siderealTime Θ0: Angle,
                                    rightAscension α2: Angle, previousRightAscension α1: Angle, nextRightAscension α3: Angle,
-                                   declination δ2: Angle, previousDeclination δ1: Angle, nextDeclination δ3: Angle) -> Double {
+                                   declination δ2: Angle, previousDeclination δ1: Angle, nextDeclination δ3: Angle) -> Double
+    {
         /* Equation from page Astronomical Algorithms 102 */
         let Lw = coordinates.longitudeAngle * Angle(-1)
         let term1 = sin(h0.radians) - (sin(coordinates.latitudeAngle.radians) * sin(δ2.radians))
@@ -191,7 +193,7 @@ enum Astronomical {
         let a = y2 - y1
         let b = y3 - y2
         let c = b - a
-        return y2 + ((n/2) * (a + b + (n * c)))
+        return y2 + ((n / 2) * (a + b + (n * c)))
     }
 
     /* Interpolation of three angles, accounting for
@@ -201,47 +203,46 @@ enum Astronomical {
         let a = (y2 - y1).unwound()
         let b = (y3 - y2).unwound()
         let c = b - a
-        return Angle(y2.degrees + ((n/2) * (a.degrees + b.degrees + (n * c.degrees))))
+        return Angle(y2.degrees + ((n / 2) * (a.degrees + b.degrees + (n * c.degrees))))
     }
-    
+
     static func julianDay(_ day: Fixed<Day>) -> Double {
         julianDay(year: day.year, month: day.month, day: day.day)
     }
 
     /* The Julian Day for the given Gregorian date. */
     static func julianDay(year: Int, month: Int, day: Int, hours: Double = 0) -> Double {
-
         /* Equation from Astronomical Algorithms page 60 */
 
         // NOTE: Casting to Int is done intentionally for the purpose of decimal truncation
 
         let Y: Int = month > 2 ? year : year - 1
         let M: Int = month > 2 ? month : month + 12
-        let D: Double = Double(day) + (hours / 24)
+        let D = Double(day) + (hours / 24)
 
-        let A: Int = Y/100
-        let B: Int = 2 - A + (A/4)
+        let A: Int = Y / 100
+        let B = 2 - A + (A / 4)
 
-        let i0: Int = Int(365.25 * (Double(Y) + 4716))
-        let i1: Int = Int(30.6001 * (Double(M) + 1))
+        let i0 = Int(365.25 * (Double(Y) + 4716))
+        let i1 = Int(30.6001 * (Double(M) + 1))
         return Double(i0) + Double(i1) + D + Double(B) - 1524.5
     }
-    
+
     /* The Julian Day for the given Gregorian date components. */
     static func julianDay(dateComponents: DateComponents) -> Double {
         let year = dateComponents.year ?? 1
         let month = dateComponents.month ?? 1
         let day = dateComponents.day ?? 1
-        let hour: Double = Double(dateComponents.hour ?? 0)
-        let minute: Double = Double(dateComponents.minute ?? 0)
-        
+        let hour = Double(dateComponents.hour ?? 0)
+        let minute = Double(dateComponents.minute ?? 0)
+
         return Astronomical.julianDay(year: year, month: month, day: day, hours: hour + (minute / 60))
     }
 
     /* Julian century from the epoch. */
     static func julianCentury(julianDay JD: Double) -> Double {
         /* Equation from Astronomical Algorithms page 163 */
-        return (JD - 2451545.0) / 36525
+        return (JD - 2_451_545.0) / 36525
     }
 
     /* Checks if the given year is a leap year. */
@@ -266,24 +267,24 @@ enum Astronomical {
 
         let adjustment: Double = {
             let dyy = Double(Astronomical.daysSinceSolstice(dayOfYear: day, year: year, latitude: latitude))
-            if ( dyy < 91) {
-                return a + ( b - a ) / 91.0 * dyy
-            } else if ( dyy < 137) {
-                return b + ( c - b ) / 46.0 * ( dyy - 91 )
-            } else if ( dyy < 183 ) {
-                return c + ( d - c ) / 46.0 * ( dyy - 137 )
-            } else if ( dyy < 229 ) {
-                return d + ( c - d ) / 46.0 * ( dyy - 183 )
-            } else if ( dyy < 275 ) {
-                return c + ( b - c ) / 46.0 * ( dyy - 229 )
+            if dyy < 91 {
+                return a + (b - a) / 91.0 * dyy
+            } else if dyy < 137 {
+                return b + (c - b) / 46.0 * (dyy - 91)
+            } else if dyy < 183 {
+                return c + (d - c) / 46.0 * (dyy - 137)
+            } else if dyy < 229 {
+                return d + (c - d) / 46.0 * (dyy - 183)
+            } else if dyy < 275 {
+                return c + (b - c) / 46.0 * (dyy - 229)
             }
 
-            return b + ( a - b ) / 91.0 * ( dyy - 275 )
+            return b + (a - b) / 91.0 * (dyy - 275)
         }()
 
         return sunrise.addingTimeInterval(round(adjustment * -60.0))
     }
-    
+
     static func seasonAdjustedMorningTwilight(latitude: Double, day: Int, year: Int, sunrise: Fixed<Second>) -> Fixed<Second> {
         let a: Double = 75 + ((28.65 / 55.0) * fabs(latitude))
         let b: Double = 75 + ((19.44 / 55.0) * fabs(latitude))
@@ -292,28 +293,28 @@ enum Astronomical {
 
         let adjustment: Double = {
             let dyy = Double(Astronomical.daysSinceSolstice(dayOfYear: day, year: year, latitude: latitude))
-            if ( dyy < 91) {
-                return a + ( b - a ) / 91.0 * dyy
-            } else if ( dyy < 137) {
-                return b + ( c - b ) / 46.0 * ( dyy - 91 )
-            } else if ( dyy < 183 ) {
-                return c + ( d - c ) / 46.0 * ( dyy - 137 )
-            } else if ( dyy < 229 ) {
-                return d + ( c - d ) / 46.0 * ( dyy - 183 )
-            } else if ( dyy < 275 ) {
-                return c + ( b - c ) / 46.0 * ( dyy - 229 )
+            if dyy < 91 {
+                return a + (b - a) / 91.0 * dyy
+            } else if dyy < 137 {
+                return b + (c - b) / 46.0 * (dyy - 91)
+            } else if dyy < 183 {
+                return c + (d - c) / 46.0 * (dyy - 137)
+            } else if dyy < 229 {
+                return d + (c - d) / 46.0 * (dyy - 183)
+            } else if dyy < 275 {
+                return c + (b - c) / 46.0 * (dyy - 229)
             }
 
-            return b + ( a - b ) / 91.0 * ( dyy - 275 )
+            return b + (a - b) / 91.0 * (dyy - 275)
         }()
 
-        return sunrise.adding(seconds: Int((round(adjustment * -60.0))))
+        return sunrise.adding(seconds: Int(round(adjustment * -60.0)))
     }
 
     /* Twilight adjustment based on observational data for use in the Moonlighting Committee calculation method. */
     static func seasonAdjustedEveningTwilight(latitude: Double, day: Int, year: Int, sunset: Date, shafaq: Shafaq) -> Date {
         let a, b, c, d: Double
-        
+
         switch shafaq {
         case .general:
             a = 75 + ((25.60 / 55.0) * fabs(latitude))
@@ -331,31 +332,31 @@ enum Astronomical {
             c = 75 + ((36.84 / 55.0) * fabs(latitude))
             d = 75 + ((81.84 / 55.0) * fabs(latitude))
         }
-        
+
         let adjustment: Double = {
             let dyy = Double(Astronomical.daysSinceSolstice(dayOfYear: day, year: year, latitude: latitude))
-            if ( dyy < 91) {
-                return a + ( b - a ) / 91.0 * dyy
-            } else if ( dyy < 137) {
-                return b + ( c - b ) / 46.0 * ( dyy - 91 )
-            } else if ( dyy < 183 ) {
-                return c + ( d - c ) / 46.0 * ( dyy - 137 )
-            } else if ( dyy < 229 ) {
-                return d + ( c - d ) / 46.0 * ( dyy - 183 )
-            } else if ( dyy < 275 ) {
-                return c + ( b - c ) / 46.0 * ( dyy - 229 )
+            if dyy < 91 {
+                return a + (b - a) / 91.0 * dyy
+            } else if dyy < 137 {
+                return b + (c - b) / 46.0 * (dyy - 91)
+            } else if dyy < 183 {
+                return c + (d - c) / 46.0 * (dyy - 137)
+            } else if dyy < 229 {
+                return d + (c - d) / 46.0 * (dyy - 183)
+            } else if dyy < 275 {
+                return c + (b - c) / 46.0 * (dyy - 229)
             }
 
-            return b + ( a - b ) / 91.0 * ( dyy - 275 )
+            return b + (a - b) / 91.0 * (dyy - 275)
         }()
 
         return sunset.addingTimeInterval(round(adjustment * 60.0))
     }
-    
+
     /* Twilight adjustment based on observational data for use in the Moonlighting Committee calculation method. */
     static func seasonAdjustedEveningTwilight(latitude: Double, day: Int, year: Int, sunset: Fixed<Second>, shafaq: Shafaq) -> Fixed<Second> {
         let a, b, c, d: Double
-        
+
         switch shafaq {
         case .general:
             a = 75 + ((25.60 / 55.0) * fabs(latitude))
@@ -373,22 +374,22 @@ enum Astronomical {
             c = 75 + ((36.84 / 55.0) * fabs(latitude))
             d = 75 + ((81.84 / 55.0) * fabs(latitude))
         }
-        
+
         let adjustment: Double = {
             let dyy = Double(Astronomical.daysSinceSolstice(dayOfYear: day, year: year, latitude: latitude))
-            if ( dyy < 91) {
-                return a + ( b - a ) / 91.0 * dyy
-            } else if ( dyy < 137) {
-                return b + ( c - b ) / 46.0 * ( dyy - 91 )
-            } else if ( dyy < 183 ) {
-                return c + ( d - c ) / 46.0 * ( dyy - 137 )
-            } else if ( dyy < 229 ) {
-                return d + ( c - d ) / 46.0 * ( dyy - 183 )
-            } else if ( dyy < 275 ) {
-                return c + ( b - c ) / 46.0 * ( dyy - 229 )
+            if dyy < 91 {
+                return a + (b - a) / 91.0 * dyy
+            } else if dyy < 137 {
+                return b + (c - b) / 46.0 * (dyy - 91)
+            } else if dyy < 183 {
+                return c + (d - c) / 46.0 * (dyy - 137)
+            } else if dyy < 229 {
+                return d + (c - d) / 46.0 * (dyy - 183)
+            } else if dyy < 275 {
+                return c + (b - c) / 46.0 * (dyy - 229)
             }
 
-            return b + ( a - b ) / 91.0 * ( dyy - 275 )
+            return b + (a - b) / 91.0 * (dyy - 275)
         }()
         return sunset.adding(seconds: Int(round(adjustment * 60.0)))
     }
@@ -400,14 +401,14 @@ enum Astronomical {
         let southernOffset = Astronomical.isLeapYear(year) ? 173 : 172
         let daysInYear = Astronomical.isLeapYear(year) ? 366 : 365
 
-        if (latitude >= 0) {
+        if latitude >= 0 {
             daysSinceSolstice = dayOfYear + northernOffset
-            if (daysSinceSolstice >= daysInYear) {
+            if daysSinceSolstice >= daysInYear {
                 daysSinceSolstice = daysSinceSolstice - daysInYear
             }
         } else {
             daysSinceSolstice = dayOfYear - southernOffset
-            if (daysSinceSolstice < 0) {
+            if daysSinceSolstice < 0 {
                 daysSinceSolstice = daysSinceSolstice + daysInYear
             }
         }
@@ -415,4 +416,3 @@ enum Astronomical {
         return daysSinceSolstice
     }
 }
-
