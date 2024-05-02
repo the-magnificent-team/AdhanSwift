@@ -23,15 +23,15 @@
 //  THE SOFTWARE.
 //
 
-import Foundation
 import CoreLocation
+import Foundation
 import SwiftUI
 
 // MARK: Double
-internal extension Double {
 
+extension Double {
     func normalizedToScale(_ max: Double) -> Double {
-        return self - (max * (floor(self / max)))
+        return self - (max * floor(self / max))
     }
 }
 
@@ -43,7 +43,7 @@ extension CLLocationCoordinate2D {
     var latitudeAngle: Angle {
         return Angle(latitude)
     }
-    
+
     var longitudeAngle: Angle {
         return Angle(longitude)
     }
@@ -55,33 +55,33 @@ extension Angle {
     init(_ degrees: Double) {
         self.init(degrees: degrees)
     }
-    
+
     func unwound() -> Angle {
         return Angle(degrees.normalizedToScale(360))
     }
-    
+
     func quadrantShifted() -> Angle {
         if degrees >= -180 && degrees <= 180 {
             return self
         }
-        
-        return Angle(degrees - (360 * (degrees/360).rounded()))
+
+        return Angle(degrees - (360 * (degrees / 360).rounded()))
     }
 }
 
-func +(left: Angle, right: Angle) -> Angle {
+func + (left: Angle, right: Angle) -> Angle {
     Angle(left.degrees + right.degrees)
 }
 
-func -(left: Angle, right: Angle) -> Angle {
+func - (left: Angle, right: Angle) -> Angle {
     Angle(left.degrees - right.degrees)
 }
 
-func *(left: Angle, right: Angle) -> Angle {
+func * (left: Angle, right: Angle) -> Angle {
     Angle(left.degrees * right.degrees)
 }
 
-func /(left: Angle, right: Angle) -> Angle {
+func / (left: Angle, right: Angle) -> Angle {
     Angle(left.degrees / right.degrees)
 }
 

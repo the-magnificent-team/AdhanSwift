@@ -28,100 +28,98 @@ import SwiftUI
 
 /**
  Preset calculation parameters for different regions.
- 
+
  *Descriptions of the different options*
- 
+
  **muslimWorldLeague**
- 
+
  Muslim World League. Standard Fajr time with an angle of 18°. Earlier Isha time with an angle of 17°.
- 
+
  **egyptian**
- 
+
  Egyptian General Authority of Survey. Early Fajr time using an angle 19.5° and a slightly earlier Isha time using an angle of 17.5°.
- 
+
  **karachi**
- 
+
  University of Islamic Sciences, Karachi. A generally applicable method that uses standard Fajr and Isha angles of 18°.
- 
+
  **ummAlQura**
- 
+
  Umm al-Qura University, Makkah. Uses a fixed interval of 90 minutes from maghrib to calculate Isha. And a slightly earlier Fajr time
  with an angle of 18.5°. Note: you should add a +30 minute custom adjustment for Isha during Ramadan.
- 
+
  **dubai**
- 
+
  Used in the UAE. Slightly earlier Fajr time and slightly later Isha time with angles of 18.2° for Fajr and Isha in addition to 3 minute
  offsets for sunrise, Dhuhr, Asr, and Maghrib.
- 
+
  **moonsightingCommittee**
- 
+
  Method developed by Khalid Shaukat, founder of Moonsighting Committee Worldwide. Uses standard 18° angles for Fajr and Isha in addition
  to seasonal adjustment values. This method automatically applies the 1/7 approximation rule for locations above 55° latitude.
  Recommended for North America and the UK.
- 
+
  **northAmerica**
- 
+
  Also known as the ISNA method. Can be used for North America, but the moonsightingCommittee method is preferable. Gives later Fajr times and early
  Isha times with angles of 15°.
- 
+
  **kuwait**
- 
+
  Standard Fajr time with an angle of 18°. Slightly earlier Isha time with an angle of 17.5°.
- 
+
  **qatar**
- 
+
  Same Isha interval as `ummAlQura` but with the standard Fajr time using an angle of 18°.
- 
+
  **singapore**
- 
+
  Used in Singapore, Malaysia, and Indonesia. Early Fajr time with an angle of 20° and standard Isha time with an angle of 18°.
- 
+
  **tehran**
- 
+
  Institute of Geophysics, University of Tehran. Early Isha time with an angle of 14°. Slightly later Fajr time with an angle of 17.7°.
  Calculates Maghrib based on the sun reaching an angle of 4.5° below the horizon.
- 
- **turkey**
- 
- An approximation of the Diyanet method used in Turkey. This approximation is less accurate outside the region of Turkey.
- 
- **other**
- 
- Defaults to angles of 0°, should generally be used for making a custom method and setting your own values.
- 
- */
 
+ **turkey**
+
+ An approximation of the Diyanet method used in Turkey. This approximation is less accurate outside the region of Turkey.
+
+ **other**
+
+ Defaults to angles of 0°, should generally be used for making a custom method and setting your own values.
+
+ */
 
 public enum CalculationMethodType: Int, CaseIterable, Codable, Identifiable {
     public var id: RawValue {
         rawValue
     }
-    
+
     case muslimWorldLeague
-    
+
     case egyptian
-    
+
     case karachi
-    
+
     case ummAlQura
-    
+
     case dubai
-    
+
     case moonsightingCommittee
-    
+
     case northAmerica
 
     case kuwait
-    
+
     case qatar
-    
+
     case singapore
-    
+
     case tehran
-    
+
     case turkey
-    
-     
+
     public var localizedName: LocalizedStringKey {
         switch self {
         case .muslimWorldLeague:
@@ -154,22 +152,22 @@ public enum CalculationMethodType: Int, CaseIterable, Codable, Identifiable {
 
 public struct CalculationMethodInput {
     public var calculationMethodType: CalculationMethodType
-    
+
     public var madhab: Madhab
-    
+
     public init(calculationMethodType: CalculationMethodType, madhab: Madhab) {
         self.calculationMethodType = calculationMethodType
         self.madhab = madhab
     }
-    
+
     public var calculationMethod: CalculationMethod {
         switch calculationMethodType {
         case .muslimWorldLeague:
             return .init(name: calculationMethodType.localizedName,
-                        fajrAngle: 18,
-                        ishaAngle: .angle(17),
-                        methodTimeAdjustments: PrayerAdjustments(dhuhr: 1),
-                        madhab: madhab)
+                         fajrAngle: 18,
+                         ishaAngle: .angle(17),
+                         methodTimeAdjustments: PrayerAdjustments(dhuhr: 1),
+                         madhab: madhab)
         case .egyptian:
             return .init(name: calculationMethodType.localizedName,
                          fajrAngle: 19.5,
@@ -191,7 +189,7 @@ public struct CalculationMethodInput {
             return .init(name: calculationMethodType.localizedName,
                          fajrAngle: 18.2,
                          ishaAngle: .angle(18.2),
-                         methodTimeAdjustments:  PrayerAdjustments(sunrise: -3, dhuhr: 3, asr: 3, maghrib: 3),
+                         methodTimeAdjustments: PrayerAdjustments(sunrise: -3, dhuhr: 3, asr: 3, maghrib: 3),
                          madhab: madhab)
         case .moonsightingCommittee:
             return .init(name: calculationMethodType.localizedName,
@@ -241,13 +239,13 @@ public struct CalculationMethodInput {
 public struct CalculationMethod: Equatable {
     public let name: LocalizedStringKey
     public let params: CalculationParameters
-    
+
     public init(name: LocalizedStringKey, fajrAngle: Double, maghribAngle: Double? = nil,
                 ishaAngle: IshaPrayerAdjustments, methodTimeAdjustments: PrayerAdjustments = .init(),
-                rounding: Rounding = .nearest, madhab: Madhab = .shafi, shafaq: Shafaq = .general, isMoonSightingCommittee: Bool = false) {
+                rounding: Rounding = .nearest, madhab: Madhab = .shafi, shafaq: Shafaq = .general, isMoonSightingCommittee: Bool = false)
+    {
         self.name = name
-        
-        
+
         params = .init(fajrAngle: fajrAngle,
                        maghribAngle: maghribAngle,
                        ishaPrayerAdjustments: ishaAngle,
@@ -259,5 +257,4 @@ public struct CalculationMethod: Equatable {
                        methodAdjustments: methodTimeAdjustments,
                        isMoonSightingCommittee: isMoonSightingCommittee)
     }
-    
 }
