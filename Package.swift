@@ -13,7 +13,7 @@ let package = Package(
             targets: ["AdhanSwift"]),
         
     ],
-    dependencies: [.package(url: "https://github.com/davedelong/time", from: "1.0.1")],
+    dependencies: [.package(url: "https://github.com/davedelong/time", from: "1.0.2")],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.

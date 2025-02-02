@@ -1,5 +1,5 @@
 //
-//  AdhanSwift.swift
+//  PrayerTimes.swift
 //  Adhan
 //
 //  Copyright © 2018 Batoul Apps. All rights reserved.
@@ -25,27 +25,7 @@
 
 import CoreLocation
 import Foundation
-import SwiftUI
-
-public struct Prayer: Equatable, Hashable, Codable, Sendable, Identifiable {
-    public let prayerName: Name
-
-    /// prayer time in GTC
-    public let prayerTime: Date
-
-    public var id: Name {
-        prayerName
-    }
-
-    public enum Name: String, Codable, Hashable, Sendable, CaseIterable {
-        case fajr
-        case sunrise
-        case dhuhr
-        case asr
-        case maghrib
-        case isha
-    }
-}
+import SwiftUICore
 
 public struct PrayerTimes: Sendable {
     public let prayers: [Prayer]
@@ -96,56 +76,6 @@ public struct PrayerTimes: Sendable {
     }
 }
 
-/* Sunnah times for a location and date using the given prayer times.
- All prayer times are in UTC and should be displayed using a DateFormatter that
- has the correct timezone set. */
-public struct SunnahTimes {
-    /* The midpoint between Maghrib and Fajr */
-    public let middleOfTheNight: Date
-
-    /* The beginning of the last third of the period between Maghrib and Fajr,
-     a recommended time to perform Qiyam */
-    public let lastThirdOfTheNight: Date
-}
-
-public extension SunnahTimes {
-    init?(from prayerTimes: PrayerTimes) {
-        guard let date = Calendar.gregorianUTC.date(from: prayerTimes.dateComponent),
-              let nextDay = Calendar.gregorianUTC.date(byAdding: .day, value: 1, to: date),
-              let nextDayPrayerTimes = PrayerTimes(
-                  coordinates: prayerTimes.coordinates,
-                  date: Calendar.gregorianUTC.dateComponents([.year, .month, .day], from: nextDay),
-                  calculationParameters: prayerTimes.calculationParameters
-              )
-        else {
-            // unable to determine tomorrow prayer times
-            return nil
-        }
-        let maghribTime = prayerTimes[.maghrib].prayerTime
-
-        let nightDuration = nextDayPrayerTimes[.fajr].prayerTime.timeIntervalSince(maghribTime)
-        middleOfTheNight = maghribTime.addingTimeInterval(nightDuration / 2).roundedMinute()
-        lastThirdOfTheNight = maghribTime.addingTimeInterval(nightDuration * (2 / 3)).roundedMinute()
-    }
-}
-
-// MARK: Qibla
-
-public struct Qibla {
-    /* The heading to the Qibla from True North */
-    public let direction: Double
-
-    public init(coordinates: Coordinates) {
-        let makkah = Coordinates(latitude: 21.4225241, longitude: 39.8261818)
-
-        /* Equation from "Spherical Trigonometry For the use of colleges and schools" page 50 */
-        let term1 = sin(makkah.longitudeAngle.radians - coordinates.longitudeAngle.radians)
-        let term2 = cos(coordinates.latitudeAngle.radians) * tan(makkah.latitudeAngle.radians)
-        let term3 = sin(coordinates.latitudeAngle.radians) * cos(makkah.longitudeAngle.radians - coordinates.longitudeAngle.radians)
-
-        direction = Angle(radians: atan2(term1, term2 - term3)).unwound().degrees
-    }
-}
 
 // MARK: extension
 
