@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/davedelong/time",
       "state" : {
-        "revision" : "12768223f019154e4c543010176dd0fff3a1f4cf",
-        "version" : "1.0.1"
+        "revision" : "b652fe17d13dca2ed5f3aa0209b309de4a10821d",
+        "version" : "1.0.2"
       }
     }
   ],
