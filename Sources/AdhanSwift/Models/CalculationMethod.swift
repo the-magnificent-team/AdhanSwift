@@ -91,7 +91,7 @@ import SwiftUI
 
  */
 
-public enum CalculationMethodType: Int, CaseIterable, Codable, Identifiable {
+public enum CalculationMethodType: Int, CaseIterable, Codable, Identifiable, Sendable {
     public var id: RawValue {
         rawValue
     }
